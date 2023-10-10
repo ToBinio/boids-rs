@@ -64,7 +64,7 @@ impl Boid {
 
             vertices.push(Vertex {
                 position: [self.location.x + angle.cos() * SIZE, self.location.y + angle.sin() * SIZE, 0.0],
-                color: [0.5, 0.0, 0.5],
+                color: [1.0, 1.0, 1.0],
             });
         }
 

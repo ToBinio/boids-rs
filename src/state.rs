@@ -5,7 +5,7 @@ use std::time::Instant;
 
 use spatial_neighbors::quad_tree::QuadTree;
 use spatial_neighbors::SpatialPartitioner;
-use wgpu::include_wgsl;
+use wgpu::{include_wgsl, RenderPipelineDescriptor, VertexState};
 use wgpu::util::{DeviceExt, StagingBelt};
 use wgpu_glyph::{ab_glyph, GlyphBrush, GlyphBrushBuilder, Section, Text};
 use winit::event::WindowEvent;
@@ -137,7 +137,7 @@ impl State {
 
         let mut boids = Vec::new();
 
-        for _ in 0..20000 {
+        for _ in 0..10000 {
             boids.push(Boid::new_random());
         }
 
@@ -277,8 +277,6 @@ impl State {
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
-        let start_time = Instant::now();
-
         let frame = self.surface.get_current_texture()?;
 
         let view = frame.texture.create_view(&wgpu::TextureViewDescriptor::default());
@@ -286,6 +284,8 @@ impl State {
         let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("Render Encoder"),
         });
+
+        let start_time = Instant::now();
 
         let mut vertices = Vec::new();
         let mut indices: Vec<u32> = Vec::new();
@@ -317,9 +317,9 @@ impl State {
                 resolve_target: None,
                 ops: wgpu::Operations {
                     load: wgpu::LoadOp::Clear(wgpu::Color {
-                        r: 0.1,
-                        g: 0.2,
-                        b: 0.3,
+                        r: 0.0,
+                        g: 0.0,
+                        b: 0.0,
                         a: 1.0,
                     }),
                     store: true,
@@ -346,7 +346,7 @@ impl State {
             screen_position: (10.0, 10.0),
             bounds: (self.size.width as f32, self.size.height as f32),
             text: vec![Text::new(format!("render: {:.1}ms\nupdate: {:.1}/{:.1}ms\nsum: {:.1}ms\nmax fps: {:.1}", render_time, update_time.0, update_time.1, sum, fps).as_str())
-                .with_color([0.0, 0.0, 0.0, 1.0])
+                .with_color([1.0, 1.0, 1.0, 1.0])
                 .with_scale(20.0)],
             ..Section::default()
         });
